@@ -104,6 +104,9 @@ class Woo_Pages_Admin
                         <td>
                             <select name="woo_pages_cart_template">
                                 <option value=""><?php esc_html_e('Default', 'woo-pages'); ?></option>
+                                <option value="villegas-cart-one" <?php selected($cart_template, 'villegas-cart-one'); ?>>
+                                    <?php esc_html_e('Villegas Cart One', 'woo-pages'); ?>
+                                </option>
                             </select>
                         </td>
                     </tr>

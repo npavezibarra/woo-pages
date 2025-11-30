@@ -55,6 +55,15 @@ class Woo_Pages_Loader
                     return $new_template;
                 }
             }
+        } elseif (is_cart()) {
+            // Load custom cart template if selected
+            $cart_template_option = get_option('woo_pages_cart_template');
+            if ('villegas-cart-one' === $cart_template_option) {
+                $cart_template = WOO_PAGES_PATH . 'templates/villegas-cart-one.php';
+                if (file_exists($cart_template)) {
+                    return $cart_template;
+                }
+            }
         }
         return $template;
     }
