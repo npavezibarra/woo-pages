@@ -25,6 +25,10 @@ class Woo_Pages_Loader
         add_action('pre_get_posts', array($this, 'apply_custom_product_order'));
         add_action('woocommerce_product_query', array($this, 'apply_custom_product_order_wc'), 10, 1);
         add_filter('posts_pre_query', array($this, 'filter_products_pre_query'), 10, 2);
+
+        // AJAX handlers for cart indicator
+        add_action('wp_ajax_get_cart_product_ids', array($this, 'ajax_get_cart_product_ids'));
+        add_action('wp_ajax_nopriv_get_cart_product_ids', array($this, 'ajax_get_cart_product_ids'));
     }
 
     /**
@@ -245,6 +249,24 @@ class Woo_Pages_Loader
 
         return null; // Let WordPress handle it normally
     }
+
+    /**
+     * AJAX handler to get product IDs currently in cart
+     */
+    public function ajax_get_cart_product_ids()
+    {
+        $product_ids = array();
+
+        if (function_exists('WC') && WC()->cart) {
+            foreach (WC()->cart->get_cart() as $cart_item) {
+                $product_ids[] = $cart_item['product_id'];
+            }
+        }
+
+        wp_send_json_success(array('product_ids' => $product_ids));
+    }
+
+
 }
 
 new Woo_Pages_Loader();

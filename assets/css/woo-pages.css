@@ -8,7 +8,7 @@ header>div>div {
     background-color: #000;
     color: #fff;
     padding: 20px 0 10px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .villegas-shop-header-inner {
@@ -133,6 +133,98 @@ header>div>div {
     opacity: 1;
 }
 
+/* WooCommerce Success Notice Styling */
+.wc-block-components-notice-banner.is-success {
+    background: linear-gradient(314deg, rgb(255, 241, 158) 0%, rgb(220, 194, 105) 100%) !important;
+    border-color: rgb(255, 225, 110) !important;
+}
+
+.wc-block-components-notice-banner.is-success>svg {
+    background-color: #ff7300 !important;
+    fill: #ffffff !important;
+    border-radius: 50% !important;
+    padding: 2px !important;
+}
+
+.wc-block-components-notice-banner.is-success>svg path {
+    fill: #ffffff !important;
+}
+
+.wc-block-components-notice-banner.is-success .button.wc-forward {
+    font-family: sans-serif !important;
+    color: #000 !important;
+    background: transparent !important;
+    border: none !important;
+    text-decoration: underline !important;
+    padding-left: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.wc-block-components-notice-banner.is-success .button.wc-forward::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="%23000"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Cart Indicator */
+.villegas-cart-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    display: flex;
+    gap: 4px;
+    z-index: 20;
+}
+
+.villegas-cart-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #000;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.villegas-cart-badge svg {
+    flex-shrink: 0;
+}
+
+.villegas-remove-from-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    padding: 0;
+    transition: background-color 0.2s ease;
+}
+
+.villegas-remove-from-cart:hover {
+    background-color: #b91c1c;
+}
+
+.villegas-remove-from-cart:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Pagination */
 .villegas-shop-content .woocommerce-pagination {
     margin-bottom: 80px;
@@ -153,6 +245,39 @@ header>div>div {
 @media (max-width: 480px) {
     .villegas-shop-content ul.products {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile: Fixed cart button at bottom-left (800px and below) */
+@media (max-width: 800px) {
+    .wc-block-components-notice-banner.is-success {
+        position: fixed !important;
+        bottom: 10px !important;
+        left: 10px !important;
+        right: auto !important;
+        top: auto !important;
+        z-index: 9999 !important;
+        margin: 0 !important;
+        padding: 12px 16px !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+
+    /* Hide the checkmark icon on mobile */
+    .wc-block-components-notice-banner.is-success>svg {
+        display: none !important;
+    }
+
+    /* Hide product name text, only show "Ver carrito" link */
+    .wc-block-components-notice-banner.is-success .wc-block-components-notice-banner__content {
+        font-size: 0 !important;
+    }
+
+    /* Show only the "Ver carrito" button */
+    .wc-block-components-notice-banner.is-success .button.wc-forward {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
     }
 }
 
