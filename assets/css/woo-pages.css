@@ -1,0 +1,155 @@
+header>div>div {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1280px;
+}
+
+.villegas-shop-header {
+    background-color: #000;
+    color: #fff;
+    padding: 20px 0 10px;
+    margin-bottom: 40px;
+}
+
+.villegas-shop-header-inner {
+    max-width: var(--wp--style--global--wide-size);
+    margin: 0 auto;
+    text-align: left;
+}
+
+.villegas-shop-breadcrumb {
+    margin-bottom: 0 !important;
+    color: #fff;
+}
+
+.villegas-shop-breadcrumb .woocommerce-breadcrumb {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    font-size: 12px;
+}
+
+.villegas-shop-breadcrumb a {
+    color: #fff;
+}
+
+.villegas-shop-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.villegas-shop-header h1 {
+    color: #fff;
+    margin: 0;
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.villegas-shop-result-count {
+    color: #fff;
+    font-size: 12px;
+    margin: 0;
+}
+
+.villegas-shop-content {
+    max-width: var(--wp--style--global--wide-size);
+    margin: 0 auto;
+}
+
+/* Force 4 columns for this template if not already handled by theme */
+.villegas-shop-content ul.products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 50px 20px;
+}
+
+.villegas-shop-content ul.products::before,
+.villegas-shop-content ul.products::after {
+    content: none !important;
+    display: none !important;
+}
+
+.villegas-shop-content ul.products li.product {
+    width: 100% !important;
+    margin: 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+.villegas-shop-content ul.products li.product .woocommerce-loop-product__title,
+.villegas-shop-content ul.products li.product .price {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    display: block;
+}
+
+.villegas-shop-content ul.products li.product .woocommerce-loop-product__title {
+    font-size: 1em !important;
+    font-weight: 900 !important;
+}
+
+.villegas-shop-content ul.products li.product .button {
+    display: inline-block !important;
+    font-family: sans-serif !important;
+    font-weight: 900 !important;
+}
+
+.villegas-shop-content ul.products li.product img {
+    margin-bottom: 0 !important;
+    transition: opacity 0.3s ease;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.villegas-shop-content ul.products li.product:hover img {
+    opacity: 0.6;
+}
+
+.villegas-image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.villegas-image-wrapper .button {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    margin: 0 !important;
+    display: inline-block !important;
+}
+
+.villegas-image-wrapper:hover .button {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .villegas-shop-content ul.products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .villegas-shop-content ul.products {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1488px) {
+
+    .villegas-shop-header-inner,
+    .villegas-shop-content {
+        padding-right: var(--wp--style--root--padding-right);
+        padding-left: var(--wp--style--root--padding-left);
+    }
+}

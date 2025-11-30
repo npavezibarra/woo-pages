@@ -61,7 +61,10 @@ class Woo_Pages
      */
     public function includes()
     {
-        // include_once WOO_PAGES_PATH . 'includes/class-woo-pages-loader.php';
+        if (is_admin()) {
+            include_once WOO_PAGES_PATH . 'includes/class-woo-pages-admin.php';
+        }
+        include_once WOO_PAGES_PATH . 'includes/class-woo-pages-loader.php';
     }
 
     /**
@@ -70,6 +73,15 @@ class Woo_Pages
     public function init_hooks()
     {
         add_action('plugins_loaded', array($this, 'on_plugins_loaded'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+    }
+
+    /**
+     * Enqueue scripts and styles.
+     */
+    public function enqueue_scripts()
+    {
+        wp_enqueue_style('woo-pages-css', WOO_PAGES_URL . 'assets/css/woo-pages.css', array(), WOO_PAGES_VERSION);
     }
 
     /**
