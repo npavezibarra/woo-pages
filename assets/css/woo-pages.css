@@ -133,6 +133,17 @@ header>div>div {
     opacity: 1;
 }
 
+/* Pagination */
+.villegas-shop-content .woocommerce-pagination {
+    margin-bottom: 80px;
+}
+
+@media (max-width: 920px) {
+    .villegas-shop-header h1 {
+        font-size: 28px;
+    }
+}
+
 @media (max-width: 768px) {
     .villegas-shop-content ul.products {
         grid-template-columns: repeat(2, 1fr);

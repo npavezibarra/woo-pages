@@ -64,13 +64,18 @@ if (!defined('ABSPATH')) {
             }
 
             if (!empty($visible_ids)) {
-                // Override the global products WordPress query ($GLOBALS['wp_query'])
+                // Override the global WordPress query with our custom product order
                 global $wp_query;
+
+                // Get current page for pagination
+                $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
                 $args = array(
                     'post_type' => 'product',
                     'post__in' => $visible_ids,
                     'orderby' => 'post__in',
-                    'posts_per_page' => -1,
+                    'posts_per_page' => 32, // 32 products per page
+                    'paged' => $paged,
                     'post_status' => 'publish',
                 );
                 $wp_query = new WP_Query($args);
@@ -138,6 +143,11 @@ if (!defined('ABSPATH')) {
              * Hook: woocommerce_after_shop_loop.
              */
             do_action('woocommerce_after_shop_loop');
+
+            /**
+             * Pagination
+             */
+            woocommerce_pagination();
         } else {
             /**
              * Hook: woocommerce_no_products_found.
