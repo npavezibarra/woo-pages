@@ -274,10 +274,14 @@ header>div>div {
     }
 
     /* Show only the "Ver carrito" button */
-    .wc-block-components-notice-banner.is-success .button.wc-forward {
+    .wc-block-components-notice-banner.is-success a,
+    .wc-block-components-notice-banner.is-success .button {
         font-size: 14px !important;
         font-weight: 600 !important;
         margin: 0 !important;
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 

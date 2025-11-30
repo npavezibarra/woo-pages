@@ -102,22 +102,51 @@ if (!defined('ABSPATH')) {
             // do_action( 'woocommerce_before_shop_loop' );
         
             // Custom Persistent Cart Notice
-            if (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) {
-                $success_notices = wc_get_notices('success');
-                if (empty($success_notices)) {
-                    $cart_url = wc_get_cart_url();
-                    ?>
-                    <div class="wc-block-components-notice-banner is-success" role="alert" tabindex="-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"
-                            focusable="false">
-                            <path d="M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z"></path>
-                        </svg>
-                        <div class="wc-block-components-notice-banner__content">
-                            Tienes productos en tu carrito. <a href="<?php echo esc_url($cart_url); ?>"
-                                class="button wc-forward wp-element-button">Ver carrito</a>
+            if (function_exists('WC') && WC()->cart) {
+                // Filter out "Undo" notices to show our persistent notice instead
+                $all_success_notices = wc_get_notices('success');
+                $has_undo = false;
+                $other_notices = array();
+
+                if (!empty($all_success_notices)) {
+                    foreach ($all_success_notices as $notice) {
+                        // Check for "restore-item" class which WooCommerce adds to the undo link
+                        if (strpos($notice['notice'], 'restore-item') !== false) {
+                            $has_undo = true;
+                        } else {
+                            $other_notices[] = $notice;
+                        }
+                    }
+
+                    if ($has_undo) {
+                        // Clear all success notices
+                        wc_clear_notices();
+                        // Re-add the ones we want to keep (if any)
+                        foreach ($other_notices as $notice) {
+                            wc_add_notice($notice['notice'], 'success');
+                        }
+                    }
+                }
+
+                // Now check if we should show the persistent notice
+                // We show it if cart is not empty AND there are no other success notices (like "Added to cart")
+                if (!WC()->cart->is_empty()) {
+                    $current_notices = wc_get_notices('success');
+                    if (empty($current_notices)) {
+                        $cart_url = wc_get_cart_url();
+                        ?>
+                        <div class="wc-block-components-notice-banner is-success" role="alert" tabindex="-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"
+                                focusable="false">
+                                <path d="M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z"></path>
+                            </svg>
+                            <div class="wc-block-components-notice-banner__content">
+                                Tienes productos en tu carrito. <a href="<?php echo esc_url($cart_url); ?>"
+                                    class="button wc-forward wp-element-button">Ver carrito</a>
+                            </div>
                         </div>
-                    </div>
-                    <?php
+                        <?php
+                    }
                 }
             }
 
