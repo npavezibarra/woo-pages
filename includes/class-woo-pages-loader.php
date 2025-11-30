@@ -94,12 +94,12 @@ class Woo_Pages_Loader
         error_log("is_shop (might be unreliable): " . (is_shop() ? 'yes' : 'no') . "\n", 3, $log_file);
         error_log("is_post_type_archive product: " . (is_post_type_archive('product') ? 'yes' : 'no') . "\n", 3, $log_file);
 
-        // NEW APPROACH: The theme bypasses normal WooCommerce conditionals
-        // Just check if it's the main query with an empty post_type - that's our product query!
-        if (!is_admin() && $query->is_main_query() && empty($query->get('post_type'))) {
+        // FIXED: Only apply to shop page, not all queries with empty post_type
+        // Check if it's the main query AND specifically the shop page
+        if (!is_admin() && $query->is_main_query() && (is_shop() || is_post_type_archive('product'))) {
 
             if ('villegas-shop-one' === $shop_template) {
-                error_log(">>> ENTERING FILTER LOGIC (EMPTY POST TYPE on MAIN QUERY) <<<\n", 3, $log_file);
+                error_log(">>> ENTERING FILTER LOGIC (SHOP PAGE DETECTED) <<<\n", 3, $log_file);
 
                 $custom_order = get_option('woo_pages_product_order', array());
                 error_log("Custom order: " . print_r($custom_order, true) . "\n", 3, $log_file);
