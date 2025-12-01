@@ -285,11 +285,391 @@ header>div>div {
     }
 }
 
-@media (max-width: 1488px) {
+.villegas-shop-header-inner,
+.villegas-shop-content {
+    padding-right: var(--wp--style--root--padding-right);
+    padding-left: var(--wp--style--root--padding-left);
+}
 
-    .villegas-shop-header-inner,
-    .villegas-shop-content {
-        padding-right: var(--wp--style--root--padding-right);
-        padding-left: var(--wp--style--root--padding-left);
+
+/* Cart Layout 66/33 */
+.villegas-cart-one .woocommerce {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 30px !important;
+    align-items: flex-start !important;
+}
+
+/* Fix for WooCommerce pseudo-elements breaking flex layout */
+.villegas-cart-one .woocommerce::before,
+.villegas-cart-one .woocommerce::after {
+    display: none !important;
+    content: none !important;
+}
+
+.villegas-cart-one .woocommerce-notices-wrapper {
+    width: 100% !important;
+    flex-basis: 100% !important;
+}
+
+/* Left Column: Cart Form */
+.villegas-cart-one .woocommerce-cart-form {
+    width: calc(66.666% - 15px) !important;
+    float: none !important;
+    margin: 0 !important;
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* Right Column: Cart Totals */
+.villegas-cart-one .cart-collaterals {
+    width: calc(33.333% - 15px) !important;
+    float: none !important;
+    margin: 0 !important;
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.villegas-cart-one .cart-collaterals .cart_totals {
+    width: 100% !important;
+    float: none !important;
+}
+
+/* --- Product Table Styling --- */
+.villegas-cart-one table.shop_table {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+}
+
+.villegas-cart-one table.shop_table thead th {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: none;
+    font-size: 0.875rem;
+    /* text-sm */
+    padding: 10px 0;
+    /* Requested padding */
+    border-bottom: 1px solid #e5e7eb;
+    background: black;
+    /* Requested */
+    color: white;
+    /* Requested */
+}
+
+.villegas-cart-one table.shop_table tbody td {
+    border-top: 1px solid #e5e7eb;
+    /* border-b in reference, but tables use border-top usually */
+    padding: 1.5rem 0;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+.villegas-cart-one table.shop_table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Product Remove */
+.villegas-cart-one td.product-remove {
+    width: 30px;
+    padding-right: 10px;
+}
+
+.villegas-cart-one td.product-remove a.remove {
+    color: #ef4444;
+    /* text-red-500 */
+    font-weight: bold;
+    font-size: 1.2rem;
+    background: transparent;
+    border: none;
+    display: inline-block;
+    line-height: 1;
+}
+
+.villegas-cart-one td.product-remove a.remove:hover {
+    background: transparent;
+    color: #b91c1c;
+}
+
+/* Product Thumbnail */
+.villegas-cart-one td.product-thumbnail {
+    width: 80px;
+    padding-right: 1rem;
+}
+
+.villegas-cart-one td.product-thumbnail img {
+    width: 60px !important;
+    /* Fallback */
+    height: 60px !important;
+    /* Requested: 60px */
+    object-fit: cover !important;
+    border-radius: 0.375rem;
+}
+
+/* User requested specificity */
+.woocommerce-page .woocommerce-cart-form .product-thumbnail a img {
+    width: 60px !important;
+    margin-left: 10px;
+    height: 60px !important;
+    /* Requested: 60px */
+    object-fit: cover !important;
+    border-radius: 0.375rem;
+}
+
+/* Global Button Font */
+.villegas-cart-one button,
+.villegas-cart-one .button,
+.villegas-cart-one input[type="submit"],
+.villegas-cart-one input[type="button"] {
+    font-family: sans-serif !important;
+}
+
+/* Product Name */
+.villegas-cart-one td.product-name a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    /* font-medium */
+    color: #111827;
+    /* text-gray-900 */
+    text-decoration: none;
+}
+
+/* Product Price & Subtotal */
+.villegas-cart-one td.product-price,
+.villegas-cart-one td.product-subtotal {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: #1f2937;
+    /* text-gray-800 */
+}
+
+.villegas-cart-one td.product-subtotal {
+    font-weight: 700;
+    /* font-bold */
+    color: #111827;
+    /* text-gray-900 */
+}
+
+/* Quantity Input */
+.villegas-cart-one .quantity .qty {
+    width: 4rem;
+    /* w-16 */
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    /* rounded-md */
+    padding: 0.25rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Coupon Section & Actions --- */
+.villegas-cart-one td.actions {
+    padding-top: 1.5rem;
+    border-top: none !important;
+    /* Restore table-cell behavior */
+    display: table-cell !important;
+    vertical-align: middle;
+}
+
+/* Clearfix for floated elements inside td */
+.villegas-cart-one td.actions::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.villegas-cart-one .coupon {
+    display: inline-flex;
+    /* Use inline-flex to sit nicely with floats if needed, or just float the container */
+    float: left;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.villegas-cart-one .coupon label {
+    display: none;
+}
+
+.villegas-cart-one .coupon .input-text {
+    border: 1px solid #d1d5db;
+    /* border-gray-300 */
+    border-radius: 0.375rem;
+    /* rounded-md */
+    padding: 0.5rem;
+    width: auto;
+    min-width: 200px;
+    color: #374151;
+    /* text-gray-700 */
+    font-family: sans-serif !important;
+}
+
+.villegas-cart-one .coupon .button {
+    background-color: #1f2937;
+    /* bg-gray-800 */
+    color: #fff;
+    border-radius: 0.375rem;
+    /* rounded-md */
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-family: sans-serif !important;
+}
+
+.villegas-cart-one .coupon .button:hover {
+    background-color: #374151;
+    /* bg-gray-700 */
+}
+
+/* Update Cart Button */
+.villegas-cart-one button[name="update_cart"] {
+    background-color: transparent;
+    color: #374151;
+    /* text-gray-700 */
+    border: 1px solid #d1d5db;
+    /* border-gray-300 */
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    float: right;
+    /* Float right as requested */
+    font-family: sans-serif !important;
+    margin-left: 0;
+}
+
+.villegas-cart-one button[name="update_cart"]:hover {
+    background-color: #f9fafb;
+    /* bg-gray-50 */
+}
+
+.villegas-cart-one button[name="update_cart"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Cart Totals --- */
+.villegas-cart-one .cart_totals h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.25rem;
+    /* text-xl */
+    font-weight: 600;
+    color: #374151;
+    /* text-gray-700 */
+    margin-bottom: 1.5rem;
+    border-bottom: none;
+    padding: 0;
+}
+
+.villegas-cart-one .cart_totals table.shop_table {
+    border: none;
+}
+
+.villegas-cart-one .cart_totals table.shop_table th {
+    font-weight: 400;
+    color: #374151;
+    /* text-gray-700 */
+    padding: 0.5rem 0;
+    border-top: none;
+}
+
+.villegas-cart-one .cart_totals table.shop_table td {
+    text-align: right;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    border-top: none;
+}
+
+.villegas-cart-one .cart_totals .order-total th,
+.villegas-cart-one .cart_totals .order-total td {
+    font-size: 1.25rem;
+    /* text-xl */
+    font-weight: 700;
+    color: #111827;
+    /* text-gray-900 */
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Shipping Comuna Field Styling */
+.villegas-cart-comuna-wrapper label {
+    display: block;
+    font-size: 0.875rem;
+    /* text-sm */
+    font-weight: 500;
+    color: #374151;
+    /* text-gray-700 */
+    margin-bottom: 0.5rem;
+}
+
+.villegas-cart-comuna-wrapper input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.villegas-cart-comuna-wrapper input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    /* focus:border-blue-500 */
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* Checkout Button */
+.villegas-cart-one .wc-proceed-to-checkout {
+    padding: 0;
+    margin-top: 2rem;
+    text-align: center;
+    width: 100%;
+}
+
+.villegas-cart-one .wc-proceed-to-checkout .checkout-button {
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 0.375rem;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    display: block;
+    transition: background-color 0.15s;
+    box-sizing: border-box !important;
+    margin: 0 auto;
+    margin-bottom: 0;
+}
+
+.villegas-cart-one .wc-proceed-to-checkout .checkout-button:hover {
+    background-color: #1f2937;
+    /* hover:bg-gray-800 */
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+
+    .villegas-cart-one .woocommerce-cart-form,
+    .villegas-cart-one .cart-collaterals {
+        width: 100%;
+    }
+
+    .villegas-cart-one .coupon {
+        flex-direction: column;
+    }
+
+    .villegas-cart-one .coupon .input-text,
+    .villegas-cart-one .coupon .button,
+    .villegas-cart-one button[name="update_cart"] {
+        width: 100%;
+        max-width: none;
+        margin-left: 0;
     }
 }

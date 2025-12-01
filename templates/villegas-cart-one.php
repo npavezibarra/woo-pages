@@ -41,12 +41,14 @@ if (!defined('ABSPATH')) {
         /**
          * Hook: woocommerce_before_main_content.
          */
+        remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0);
         do_action('woocommerce_before_main_content');
 
         if (have_posts()) {
             while (have_posts()) {
                 the_post();
-                the_content();
+                // Force Classic Cart Shortcode
+                echo do_shortcode('[woocommerce_cart]');
             }
         }
 

@@ -29,6 +29,50 @@ class Woo_Pages_Loader
         // AJAX handlers for cart indicator
         add_action('wp_ajax_get_cart_product_ids', array($this, 'ajax_get_cart_product_ids'));
         add_action('wp_ajax_nopriv_get_cart_product_ids', array($this, 'ajax_get_cart_product_ids'));
+
+        // Enqueue cart scripts
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_cart_scripts'), 20);
+
+        // Inject Shipping Comuna field
+        add_action('woocommerce_cart_totals_before_shipping', array($this, 'inject_shipping_comuna_field'));
+    }
+
+    /**
+     * Inject the Shipping Comuna field into the cart totals.
+     */
+    public function inject_shipping_comuna_field()
+    {
+        ?>
+        <div class="villegas-cart-comuna-wrapper" style="margin-bottom: 15px;">
+            <label for="villegas_cart_comuna" style="display:block; margin-bottom:5px; font-weight:bold;">Comuna de
+                despacho</label>
+            <input type="text" id="villegas_cart_comuna" class="input-text" placeholder="Escribe tu comuna..."
+                style="width:100%;" autocomplete="off" />
+        </div>
+        <?php
+    }
+
+    /**
+     * Enqueue scripts for the cart page.
+     */
+    public function enqueue_cart_scripts()
+    {
+        if (is_cart()) {
+            wp_enqueue_script('jquery-ui-autocomplete');
+
+            // Ensure Comunas data is available (from WooCheck plugin)
+            if (wp_script_is('woo-check-comunas-chile', 'registered')) {
+                wp_enqueue_script('woo-check-comunas-chile');
+            }
+
+            wp_enqueue_script(
+                'woo-pages-cart',
+                WOO_PAGES_URL . 'assets/js/woo-pages-cart.js',
+                array('jquery', 'jquery-ui-autocomplete', 'woo-check-comunas-chile'),
+                WOO_PAGES_VERSION,
+                true
+            );
+        }
     }
 
     /**

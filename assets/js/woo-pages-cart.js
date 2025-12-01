@@ -1,0 +1,137 @@
+jQuery(document).ready(function ($) {
+    console.log("✅ Woo Pages Cart JS loaded (Classic Mode)");
+
+    const fieldId = 'villegas_cart_comuna';
+
+    // --- REGION CODE MAP ---
+    const regionCodeMap = {
+        'arica y parinacota': 'CL-AP',
+        'tarapaca': 'CL-TA',
+        'antofagasta': 'CL-AN',
+        'atacama': 'CL-AT',
+        'coquimbo': 'CL-CO',
+        'valparaiso': 'CL-VS',
+        'metropolitana de santiago': 'CL-RM',
+        'region metropolitana': 'CL-RM',
+        'región metropolitana': 'CL-RM',
+        'libertador general bernardo ohiggins': 'CL-LI',
+        'libertador general bernardo o higgins': 'CL-LI',
+        'maule': 'CL-ML',
+        'nuble': 'CL-NB',
+        'ñuble': 'CL-NB',
+        'biobio': 'CL-BI',
+        'bío-bío': 'CL-BI',
+        'araucania': 'CL-AR',
+        'la araucania': 'CL-AR',
+        'los rios': 'CL-LR',
+        'los lagos': 'CL-LL',
+        'aysen': 'CL-AI',
+        'aysén': 'CL-AI',
+        'magallanes': 'CL-MA'
+    };
+
+    // --- HELPER FUNCTIONS ---
+    function normalizeString(str) {
+        return str
+            .trim()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[’']/g, '')
+            .replace(/[^a-zA-ZñÑ0-9\s]/g, '')
+            .toLowerCase()
+            .replace(/\s+/g, ' ');
+    }
+
+    // --- COMUNA DATA PREPARATION ---
+    let comunaList = [];
+    let comunaToRegionMap = {};
+
+    if (typeof comunasChile !== "undefined") {
+        comunasChile.forEach(entry => {
+            entry.comunas.forEach(comuna => {
+                comunaList.push(comuna);
+                const normalized = normalizeString(comuna);
+                comunaToRegionMap[normalized] = entry.region;
+            });
+        });
+    } else {
+        console.warn("⚠️ comunasChile is not defined. Autocomplete will not work.");
+    }
+
+    // --- AUTOCOMPLETE LOGIC ---
+    function initAutocomplete() {
+        const $input = $('#' + fieldId);
+
+        if (!$input.length) {
+            console.warn("⚠️ Comuna field not found:", fieldId);
+            return;
+        }
+
+        $input.autocomplete({
+            source: function (request, response) {
+                const term = request.term;
+                const regex = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
+                const matches = comunaList.filter(function (comuna) {
+                    return regex.test(comuna);
+                });
+                response(matches);
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                const selectedComuna = ui.item.value;
+                console.log("🟢 Comuna selected:", selectedComuna);
+                updateShipping(selectedComuna);
+            }
+        });
+    }
+
+    // --- UPDATE SHIPPING LOGIC ---
+    function updateShipping(comuna) {
+        const normalized = normalizeString(comuna);
+        const regionName = comunaToRegionMap[normalized];
+
+        if (!regionName) {
+            console.warn("⚠️ Region not found for comuna:", comuna);
+            return;
+        }
+
+        const normalizedRegion = normalizeString(regionName);
+        const regionCode = regionCodeMap[normalizedRegion];
+
+        console.log("📍 Updating shipping to:", comuna, regionCode);
+
+        // Classic Cart Calculator Fields
+        let $calcState = $('#calc_shipping_state');
+        let $calcCity = $('#calc_shipping_city');
+        let $calcCountry = $('#calc_shipping_country');
+        let $calcButton = $('button[name="calc_shipping"]');
+
+        if ($calcState.length) {
+            // Ensure country is Chile
+            if ($calcCountry.val() !== 'CL') {
+                $calcCountry.val('CL').trigger('change');
+            }
+
+            // Set State
+            $calcState.val(regionCode).trigger('change');
+
+            // Set City
+            $calcCity.val(comuna).trigger('change');
+
+            // Trigger Update
+            $calcButton.trigger('click');
+            console.log("✅ Triggered standard shipping calculator update");
+        } else {
+            console.warn("⚠️ Standard shipping calculator fields not found. Is the calculator enabled in WooCommerce settings?");
+        }
+    }
+
+    // Initialize
+    initAutocomplete();
+
+    // Re-init on cart update (WooCommerce refreshes the cart via AJAX)
+    $(document.body).on('updated_cart_totals', function () {
+        console.log("🔄 Cart totals updated, re-initializing autocomplete");
+        initAutocomplete();
+    });
+});
