@@ -42,6 +42,10 @@ class Woo_Pages_Loader
      */
     public function inject_shipping_comuna_field()
     {
+        // Only show if Woo Check's comunas script is registered (implies plugin is active)
+        if (!wp_script_is('woo-check-comunas-chile', 'registered')) {
+            return;
+        }
         ?>
         <div class="villegas-cart-comuna-wrapper" style="margin-bottom: 15px;">
             <label for="villegas_cart_comuna" style="display:block; margin-bottom:5px; font-weight:bold;">Comuna de

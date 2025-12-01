@@ -314,7 +314,8 @@ header>div>div {
 
 /* Left Column: Cart Form */
 .villegas-cart-one .woocommerce-cart-form {
-    width: calc(66.666% - 15px) !important;
+    width: calc(60% - 15px) !important;
+    /* Requested: 60% */
     float: none !important;
     margin: 0 !important;
     background: #fff;
@@ -325,7 +326,8 @@ header>div>div {
 
 /* Right Column: Cart Totals */
 .villegas-cart-one .cart-collaterals {
-    width: calc(33.333% - 15px) !important;
+    width: calc(40% - 15px) !important;
+    /* Requested: 40% */
     float: none !important;
     margin: 0 !important;
     background: #fff;
@@ -528,63 +530,84 @@ header>div>div {
     /* bg-gray-700 */
 }
 
-/* Update Cart Button */
+/* Update Cart Button - Hidden as per request for auto-update */
 .villegas-cart-one button[name="update_cart"] {
-    background-color: transparent;
-    color: #374151;
-    /* text-gray-700 */
-    border: 1px solid #d1d5db;
-    /* border-gray-300 */
-    border-radius: 0.375rem;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    float: right;
-    /* Float right as requested */
-    font-family: sans-serif !important;
-    margin-left: 0;
-}
-
-.villegas-cart-one button[name="update_cart"]:hover {
-    background-color: #f9fafb;
-    /* bg-gray-50 */
-}
-
-.villegas-cart-one button[name="update_cart"]:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+    display: none !important;
 }
 
 /* --- Cart Totals --- */
+.villegas-cart-one .cart_totals {
+    width: 100%;
+}
+
 .villegas-cart-one .cart_totals h2 {
     font-family: 'Inter', sans-serif;
     font-size: 1.25rem;
     /* text-xl */
-    font-weight: 600;
-    color: #374151;
-    /* text-gray-700 */
+    font-weight: 700;
+    /* font-bold */
     margin-bottom: 1.5rem;
+    color: #111827;
+    /* text-gray-900 */
+    text-align: left;
+    /* Requested: Align left */
     border-bottom: none;
-    padding: 0;
+    padding-bottom: 0;
 }
 
 .villegas-cart-one .cart_totals table.shop_table {
     border: none;
+    width: 100%;
+    margin-bottom: 1.5rem;
 }
 
-.villegas-cart-one .cart_totals table.shop_table th {
-    font-weight: 400;
-    color: #374151;
-    /* text-gray-700 */
-    padding: 0.5rem 0;
-    border-top: none;
-}
-
+.villegas-cart-one .cart_totals table.shop_table th,
 .villegas-cart-one .cart_totals table.shop_table td {
-    text-align: right;
-    font-weight: 500;
-    padding: 0.5rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+.villegas-cart-one .cart_totals table.shop_table tr:first-child th,
+.villegas-cart-one .cart_totals table.shop_table tr:first-child td {
     border-top: none;
+}
+
+/* Autocomplete Styling */
+.ui-autocomplete {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    padding: 0.5rem 0 !important;
+    list-style: none !important;
+    z-index: 9999 !important;
+    max-height: 300px;
+    overflow-y: auto;
+    width: auto !important;
+    min-width: 200px;
+}
+
+.ui-menu-item {
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+}
+
+.ui-menu-item-wrapper {
+    padding: 0.5rem 1rem !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.875rem !important;
+    color: #374151 !important;
+    cursor: pointer !important;
+    display: block !important;
+}
+
+.ui-menu-item-wrapper:hover,
+.ui-menu-item-wrapper.ui-state-active {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+    border: none !important;
+    margin: 0 !important;
 }
 
 .villegas-cart-one .cart_totals .order-total th,
