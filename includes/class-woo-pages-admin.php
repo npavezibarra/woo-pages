@@ -143,22 +143,41 @@ class Woo_Pages_Admin
             'nonce' => wp_create_nonce('woo_pages_product_order')
         ));
 
-        // Get all products
-        $args = array(
+        // Get all published products
+        $all_products = get_posts(array(
             'post_type' => 'product',
             'posts_per_page' => -1,
-            'orderby' => 'menu_order',
-            'order' => 'ASC'
-        );
+            'post_status' => 'publish',
+            'orderby' => 'date',
+            'order' => 'DESC'
+        ));
 
         // Get custom order if exists
         $custom_order = get_option('woo_pages_product_order', array());
+
+        // Organize products: ordered first, then new products
+        $products = array();
+        $ordered_product_ids = array();
+
         if (!empty($custom_order)) {
-            $args['post__in'] = $custom_order;
-            $args['orderby'] = 'post__in';
+            // Add products in custom order first
+            foreach ($custom_order as $product_id) {
+                foreach ($all_products as $product) {
+                    if ($product->ID == $product_id) {
+                        $products[] = $product;
+                        $ordered_product_ids[] = $product_id;
+                        break;
+                    }
+                }
+            }
         }
 
-        $products = get_posts($args);
+        // Add any new products that aren't in the custom order yet
+        foreach ($all_products as $product) {
+            if (!in_array($product->ID, $ordered_product_ids)) {
+                $products[] = $product;
+            }
+        }
 
         ?>
         <div class="wrap">

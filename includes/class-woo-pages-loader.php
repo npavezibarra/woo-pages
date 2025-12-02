@@ -165,49 +165,60 @@ class Woo_Pages_Loader
                 $custom_order = get_option('woo_pages_product_order', array());
                 error_log("Custom order: " . print_r($custom_order, true) . "\n", 3, $log_file);
 
+                // Get all published products
+                $all_products = get_posts(array(
+                    'post_type' => 'product',
+                    'posts_per_page' => -1,
+                    'post_status' => 'publish',
+                    'fields' => 'ids',
+                    'suppress_filters' => true
+                ));
+
+                error_log("All products found: " . count($all_products) . "\n", 3, $log_file);
+
+                // Build final product list: custom order first, then new products
+                $final_product_ids = array();
+
                 if (!empty($custom_order)) {
-                    // Get all products
-                    $all_products = get_posts(array(
-                        'post_type' => 'product',
-                        'posts_per_page' => -1,
-                        'post_status' => 'publish',
-                        'fields' => 'ids',
-                        'suppress_filters' => true
-                    ));
-
-                    error_log("All products found: " . count($all_products) . "\n", 3, $log_file);
-
-                    // Filter for visible products only, maintaining custom order
-                    $visible_ids = array();
+                    // Add visible products from custom order first
                     foreach ($custom_order as $product_id) {
                         $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
                         error_log("Product ID $product_id visibility: '$is_visible'\n", 3, $log_file);
-                        if ($is_visible !== '0') {
-                            $visible_ids[] = $product_id;
+                        if ($is_visible !== '0' && in_array($product_id, $all_products)) {
+                            $final_product_ids[] = $product_id;
                         }
                     }
+                }
 
-                    error_log("Visible product IDs in order: " . implode(', ', $visible_ids) . "\n", 3, $log_file);
-
-                    if (!empty($visible_ids)) {
-                        // FORCIBLY set post type to product
-                        $query->set('post_type', 'product');
-                        // Set the specific product IDs
-                        $query->set('post__in', $visible_ids);
-                        // Ensure the order is respected
-                        $query->set('orderby', 'post__in');
-                        // Remove any other ordering
-                        $query->set('order', '');
-
-                        // Log what was actually set
-                        error_log("FORCED post_type to: product\n", 3, $log_file);
-                        error_log("FORCED post__in to: " . print_r($visible_ids, true) . "\n", 3, $log_file);
-                        error_log("FORCED orderby to: post__in\n", 3, $log_file);
-                    } else {
-                        error_log("No visible products found!\n", 3, $log_file);
+                // Add any new products that aren't in custom order yet (and are visible by default)
+                foreach ($all_products as $product_id) {
+                    if (!in_array($product_id, $final_product_ids)) {
+                        $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
+                        // New products are visible by default (empty meta = visible)
+                        if ($is_visible !== '0') {
+                            $final_product_ids[] = $product_id;
+                        }
                     }
+                }
+
+                error_log("Final product IDs in order: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
+
+                if (!empty($final_product_ids)) {
+                    // FORCIBLY set post type to product
+                    $query->set('post_type', 'product');
+                    // Set the specific product IDs
+                    $query->set('post__in', $final_product_ids);
+                    // Ensure the order is respected
+                    $query->set('orderby', 'post__in');
+                    // Remove any other ordering
+                    $query->set('order', '');
+
+                    // Log what was actually set
+                    error_log("FORCED post_type to: product\n", 3, $log_file);
+                    error_log("FORCED post__in to: " . print_r($final_product_ids, true) . "\n", 3, $log_file);
+                    error_log("FORCED orderby to: post__in\n", 3, $log_file);
                 } else {
-                    error_log("No custom order set\n", 3, $log_file);
+                    error_log("No visible products found!\n", 3, $log_file);
                 }
 
                 error_log("===== apply_custom_product_order END =====\n\n", 3, $log_file);
@@ -236,25 +247,44 @@ class Woo_Pages_Loader
 
         error_log(">>> APPLYING CUSTOM ORDER VIA WC HOOK <<<\n", 3, $log_file);
 
-        $custom_order = get_option('woo_pages_product_order', array());
-        if (empty($custom_order)) {
-            error_log("No custom order set\n\n", 3, $log_file);
-            return;
-        }
+        // Get all published products
+        $all_products_query = new WP_Query(array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+            'fields' => 'ids'
+        ));
+        $all_product_ids = $all_products_query->posts;
 
-        // Filter for visible products only
-        $visible_ids = array();
-        foreach ($custom_order as $product_id) {
-            $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
-            if ($is_visible !== '0') {
-                $visible_ids[] = $product_id;
+        $custom_order = get_option('woo_pages_product_order', array());
+
+        // Build final product list
+        $final_product_ids = array();
+
+        if (!empty($custom_order)) {
+            // Add visible products from custom order first
+            foreach ($custom_order as $product_id) {
+                $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
+                if ($is_visible !== '0' && in_array($product_id, $all_product_ids)) {
+                    $final_product_ids[] = $product_id;
+                }
             }
         }
 
-        error_log("Visible product IDs: " . implode(', ', $visible_ids) . "\n", 3, $log_file);
+        // Add new products not in custom order
+        foreach ($all_product_ids as $product_id) {
+            if (!in_array($product_id, $final_product_ids)) {
+                $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
+                if ($is_visible !== '0') {
+                    $final_product_ids[] = $product_id;
+                }
+            }
+        }
 
-        if (!empty($visible_ids)) {
-            $query->set('post__in', $visible_ids);
+        error_log("Final product IDs: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
+
+        if (!empty($final_product_ids)) {
+            $query->set('post__in', $final_product_ids);
             $query->set('orderby', 'post__in');
             error_log("Set post__in and orderby via WC hook\n\n", 3, $log_file);
         }
@@ -274,32 +304,54 @@ class Woo_Pages_Loader
             if ('villegas-shop-one' === $shop_template) {
                 error_log("[" . date('Y-m-d H:i:s') . "] ===== POSTS_PRE_QUERY HOOK FIRED =====\n", 3, $log_file);
 
+                // Get all published products
+                $all_product_ids = get_posts(array(
+                    'post_type' => 'product',
+                    'posts_per_page' => -1,
+                    'post_status' => 'publish',
+                    'fields' => 'ids',
+                    'suppress_filters' => true
+                ));
+
                 $custom_order = get_option('woo_pages_product_order', array());
+
+                // Build final product list
+                $final_product_ids = array();
+
                 if (!empty($custom_order)) {
-                    // Get visible products
-                    $visible_ids = array();
+                    // Add visible products from custom order first
                     foreach ($custom_order as $product_id) {
                         $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
-                        if ($is_visible !== '0') {
-                            $visible_ids[] = $product_id;
+                        if ($is_visible !== '0' && in_array($product_id, $all_product_ids)) {
+                            $final_product_ids[] = $product_id;
                         }
                     }
+                }
 
-                    if (!empty($visible_ids)) {
-                        error_log("Fetching products directly: " . implode(', ', $visible_ids) . "\n", 3, $log_file);
-
-                        // Manually get the posts in our custom order
-                        $posts = get_posts(array(
-                            'post_type' => 'product',
-                            'post__in' => $visible_ids,
-                            'orderby' => 'post__in',
-                            'posts_per_page' => -1,
-                            'suppress_filters' => true
-                        ));
-
-                        error_log("Retrieved " . count($posts) . " posts\n\n", 3, $log_file);
-                        return $posts;
+                // Add new products not in custom order
+                foreach ($all_product_ids as $product_id) {
+                    if (!in_array($product_id, $final_product_ids)) {
+                        $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
+                        if ($is_visible !== '0') {
+                            $final_product_ids[] = $product_id;
+                        }
                     }
+                }
+
+                if (!empty($final_product_ids)) {
+                    error_log("Fetching products directly: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
+
+                    // Manually get the posts in our custom order
+                    $posts = get_posts(array(
+                        'post_type' => 'product',
+                        'post__in' => $final_product_ids,
+                        'orderby' => 'post__in',
+                        'posts_per_page' => -1,
+                        'suppress_filters' => true
+                    ));
+
+                    error_log("Retrieved " . count($posts) . " posts\n\n", 3, $log_file);
+                    return $posts;
                 }
             }
         }

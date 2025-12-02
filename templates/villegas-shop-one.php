@@ -51,43 +51,65 @@ if (!defined('ABSPATH')) {
         do_action('woocommerce_before_main_content');
 
         // CUSTOM PRODUCT ORDERING & VISIBILITY
+        // Get all published products
+        $all_product_ids = get_posts(array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+            'fields' => 'ids',
+            'suppress_filters' => true
+        ));
+
         $custom_order = get_option('woo_pages_product_order', array());
 
+        // Build final product list: custom order first, then new products
+        $final_product_ids = array();
+
         if (!empty($custom_order)) {
-            // Filter for visible products only
-            $visible_ids = array();
+            // Add visible products from custom order first
             foreach ($custom_order as $product_id) {
                 $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
-                if ($is_visible !== '0') {
-                    $visible_ids[] = $product_id;
+                if ($is_visible !== '0' && in_array($product_id, $all_product_ids)) {
+                    $final_product_ids[] = $product_id;
                 }
             }
+        }
 
-            if (!empty($visible_ids)) {
-                // Override the global WordPress query with our custom product order
-                global $wp_query;
-
-                // Get current page for pagination
-                $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-
-                $args = array(
-                    'post_type' => 'product',
-                    'post__in' => $visible_ids,
-                    'orderby' => 'post__in',
-                    'posts_per_page' => 32, // 32 products per page
-                    'paged' => $paged,
-                    'post_status' => 'publish',
-                );
-                $wp_query = new WP_Query($args);
-
-                // Setup WooCommerce loop properties
-                wc_setup_loop(array(
-                    'total' => $wp_query->found_posts,
-                    'per_page' => $wp_query->query_vars['posts_per_page'],
-                    'current_page' => max(1, $wp_query->get('paged', 1)),
-                    'total_pages' => $wp_query->max_num_pages,
-                ));
+        // Add any new products that aren't in custom order yet
+        foreach ($all_product_ids as $product_id) {
+            if (!in_array($product_id, $final_product_ids)) {
+                $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
+                // New products are visible by default (empty meta = visible)
+                if ($is_visible !== '0') {
+                    $final_product_ids[] = $product_id;
+                }
             }
+        }
+
+        if (!empty($final_product_ids)) {
+            // Override the global WordPress query with our custom product order
+            global $wp_query;
+
+            // Get current page for pagination
+            $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
+            $args = array(
+                'post_type' => 'product',
+                'post__in' => $final_product_ids,
+                'orderby' => 'post__in',
+                'posts_per_page' => 32, // 32 products per page
+                'paged' => $paged,
+                'post_status' => 'publish',
+            );
+            $wp_query = new WP_Query($args);
+
+            // Setup WooCommerce loop properties
+            wc_setup_loop(array(
+                'total' => $wp_query->found_posts,
+                'per_page' => $wp_query->query_vars['posts_per_page'],
+                'current_page' => max(1, $wp_query->get('paged', 1)),
+                'total_pages' => $wp_query->max_num_pages,
+            ));
         }
 
         if (woocommerce_product_loop()) {
@@ -283,7 +305,7 @@ if (!defined('ABSPATH')) {
                 e.stopPropagation();
                 var $button = $(this);
                 var removeUrl = $button.data('remove-url');
-                
+
                 if (removeUrl) {
                     console.log('Redirecting to remove URL:', removeUrl);
                     // Disable button to prevent multiple clicks
