@@ -291,6 +291,14 @@ header>div>div {
     padding-left: var(--wp--style--root--padding-left);
 }
 
+/* Hide WooCommerce notices on cart page */
+.villegas-cart-one .woocommerce-notices-wrapper,
+.villegas-cart-one .woocommerce-message,
+.villegas-cart-one .woocommerce-info,
+.villegas-cart-one .woocommerce-error {
+    display: none !important;
+}
+
 
 /* Cart Layout 66/33 */
 .villegas-cart-one .woocommerce {
@@ -343,11 +351,11 @@ header>div>div {
 
 /* --- Product Table Styling --- */
 .villegas-cart-one table.shop_table {
-    border: none;
-    border-collapse: collapse;
+    margin: 0 -1px 0px 0;
+    text-align: left;
     width: 100%;
-    margin: 0;
-    border-radius: 0;
+    border-collapse: separate;
+    border-radius: 5px;
 }
 
 .villegas-cart-one table.shop_table thead th {
@@ -473,7 +481,10 @@ header>div>div {
 /* --- Coupon Section & Actions --- */
 .villegas-cart-one td.actions {
     padding-top: 1.5rem;
-    border-top: none !important;
+    border-top: 1px solid #e5e7eb !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
     /* Restore table-cell behavior */
     display: table-cell !important;
     vertical-align: middle;
@@ -650,7 +661,7 @@ header>div>div {
 /* Checkout Button */
 .villegas-cart-one .wc-proceed-to-checkout {
     padding: 0;
-    margin-top: 2rem;
+    margin-top: 0px !important;
     text-align: center;
     width: 100%;
 }
@@ -659,21 +670,39 @@ header>div>div {
     background-color: #000;
     color: #fff;
     width: 100%;
-    padding: 10px;
+    padding: 10px !important;
     border-radius: 0.375rem;
-    font-size: 16px;
+    font-size: 16px !important;
     font-weight: 600;
     text-align: center;
     display: block;
     transition: background-color 0.15s;
     box-sizing: border-box !important;
     margin: 0 auto;
-    margin-bottom: 0;
+    margin-bottom: 0px !important;
+    line-height: 1.5 !important;
+    height: auto !important;
 }
 
 .villegas-cart-one .wc-proceed-to-checkout .checkout-button:hover {
     background-color: #1f2937;
     /* hover:bg-gray-800 */
+}
+
+/* Shipping Destination Text */
+p.woocommerce-shipping-destination {
+    font-size: 14px;
+}
+
+/* Responsive: 1120px breakpoint */
+@media (max-width: 1120px) {
+    .villegas-cart-one .woocommerce-cart-form {
+        width: 100% !important;
+    }
+
+    .villegas-cart-one .cart-collaterals {
+        width: 100% !important;
+    }
 }
 
 /* Mobile Responsive */

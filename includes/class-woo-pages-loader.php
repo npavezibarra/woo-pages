@@ -48,8 +48,7 @@ class Woo_Pages_Loader
         }
         ?>
         <div class="villegas-cart-comuna-wrapper" style="margin-bottom: 15px;">
-            <label for="villegas_cart_comuna" style="display:block; margin-bottom:5px; font-weight:bold;">Comuna de
-                despacho</label>
+            <label for="villegas_cart_comuna" style="display:block; margin-bottom:5px; font-weight:bold;">Calcula envío</label>
             <input type="text" id="villegas_cart_comuna" class="input-text" placeholder="Escribe tu comuna..."
                 style="width:100%;" autocomplete="off" />
         </div>
