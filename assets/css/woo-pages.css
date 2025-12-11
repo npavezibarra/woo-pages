@@ -694,6 +694,15 @@ p.woocommerce-shipping-destination {
     font-size: 14px;
 }
 
+/* Default: Show desktop tbody, hide mobile tbody */
+.villegas-cart-mobile {
+    display: none;
+}
+
+.villegas-cart-desktop {
+    display: table-row-group;
+}
+
 /* Responsive: 1120px breakpoint */
 @media (max-width: 1120px) {
     .villegas-cart-one .woocommerce-cart-form {
@@ -713,15 +722,115 @@ p.woocommerce-shipping-destination {
         width: 100%;
     }
 
-    .villegas-cart-one .coupon {
-        flex-direction: column;
+    /* Hide desktop tbody on mobile */
+    .villegas-cart-desktop {
+        display: none !important;
     }
 
-    .villegas-cart-one .coupon .input-text,
-    .villegas-cart-one .coupon .button,
-    .villegas-cart-one button[name="update_cart"] {
+    /* Show mobile tbody on mobile */
+    .villegas-cart-mobile {
+        display: block !important;
         width: 100%;
-        max-width: none;
-        margin-left: 0;
+        font-family: 'Lexend', sans-serif !important;
+    }
+
+    .villegas-cart-mobile * {
+        font-family: 'Lexend', sans-serif !important;
+    }
+
+    /* Transform table into block for mobile structure */
+    .villegas-cart-one table.shop_table,
+    .woocommerce table.shop_table {
+        border: none !important;
+        display: block;
+        width: 100%;
+    }
+
+    .villegas-cart-one table.shop_table thead {
+        display: none;
+    }
+
+    .villegas-cart-mobile tr,
+    .villegas-cart-mobile td {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: none;
+    }
+
+    /* Remove the ::before pseudo-element (the colon) */
+    .villegas-cart-mobile td::before {
+        content: none !important;
+        display: none !important;
+    }
+
+    /* Force thumbnail image to fill its container */
+    .villegas-mobile-thumb img {
+        width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 0;
+    }
+
+    /* Reset default .remove styles for mobile text link */
+    .villegas-mobile-details .product-remove-link a.remove {
+        display: inline-block !important;
+        width: auto !important;
+        height: auto !important;
+        line-height: normal !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: #000 !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .villegas-mobile-details .product-remove-link a.remove:hover {
+        background: transparent !important;
+        color: #333 !important;
+        text-decoration: underline !important;
+    }
+
+    /* Coupon section - last row */
+    .villegas-cart-one td.actions {
+        padding: 15px !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: block;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .villegas-cart-one .coupon {
+        display: flex;
+        flex-direction: column;
+        float: none;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .villegas-cart-one .coupon .input-text {
+        width: 100% !important;
+        min-width: 0;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .villegas-cart-one .coupon .button {
+        width: 100% !important;
+        flex-shrink: 0;
+        background-color: #1f2937;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        box-sizing: border-box;
     }
 }

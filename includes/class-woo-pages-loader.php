@@ -38,6 +38,10 @@ class Woo_Pages_Loader
 
         // Override WooCommerce templates
         add_filter('woocommerce_locate_template', array($this, 'override_woocommerce_template'), 10, 3);
+
+        // Change "Add to cart" button text to "Comprar"
+        add_filter('woocommerce_product_add_to_cart_text', array($this, 'change_add_to_cart_text'), 10, 2);
+        add_filter('woocommerce_product_single_add_to_cart_text', array($this, 'change_add_to_cart_text'), 10, 2);
     }
 
     /**
@@ -137,6 +141,17 @@ class Woo_Pages_Loader
         return $template;
     }
 
+    /**
+     * Change "Add to cart" button text to "Comprar".
+     *
+     * @param string $text Button text.
+     * @param object $product Product object.
+     * @return string Modified button text.
+     */
+    public function change_add_to_cart_text($text, $product = null)
+    {
+        return 'Comprar';
+    }
 
     /**
      * Remove default WooCommerce sorting to use custom order.
