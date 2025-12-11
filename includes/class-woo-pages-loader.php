@@ -35,6 +35,9 @@ class Woo_Pages_Loader
 
         // Inject Shipping Comuna field
         add_action('woocommerce_cart_totals_before_shipping', array($this, 'inject_shipping_comuna_field'));
+
+        // Override WooCommerce templates
+        add_filter('woocommerce_locate_template', array($this, 'override_woocommerce_template'), 10, 3);
     }
 
     /**
@@ -115,6 +118,25 @@ class Woo_Pages_Loader
         return $template;
     }
 
+    /**
+     * Override WooCommerce templates.
+     *
+     * @param string $template      Template.
+     * @param string $template_name Template name.
+     * @param string $template_path Template path.
+     * @return string
+     */
+    public function override_woocommerce_template($template, $template_name, $template_path)
+    {
+        $plugin_path = WOO_PAGES_PATH . 'templates/woocommerce/';
+
+        if (file_exists($plugin_path . $template_name)) {
+            $template = $plugin_path . $template_name;
+        }
+
+        return $template;
+    }
+
 
     /**
      * Remove default WooCommerce sorting to use custom order.
@@ -141,7 +163,9 @@ class Woo_Pages_Loader
      */
     public function apply_custom_product_order($query)
     {
-        // Log entry to debug file
+        // Debug logging disabled to prevent memory exhaustion
+        // Uncomment only when debugging is needed
+        /*
         $log_file = WOO_PAGES_PATH . 'debug.log';
         error_log("[" . date('Y-m-d H:i:s') . "] ===== apply_custom_product_order START =====\n", 3, $log_file);
         error_log("Query type: " . get_class($query) . "\n", 3, $log_file);
@@ -150,19 +174,22 @@ class Woo_Pages_Loader
         error_log("Shop template: " . $shop_template . "\n", 3, $log_file);
         error_log("is_admin: " . (is_admin() ? 'yes' : 'no') . "\n", 3, $log_file);
         error_log("is_main_query: " . ($query->is_main_query() ? 'yes' : 'no') . "\n", 3, $log_file);
-        error_log("post_type: " . $query->get('post_type') . "\n", 3, $log_file);
+        $post_type = $query->get('post_type');
+        error_log("post_type: " . (is_array($post_type) ? print_r($post_type, true) : $post_type) . "\n", 3, $log_file);
         error_log("is_shop (might be unreliable): " . (is_shop() ? 'yes' : 'no') . "\n", 3, $log_file);
         error_log("is_post_type_archive product: " . (is_post_type_archive('product') ? 'yes' : 'no') . "\n", 3, $log_file);
+        */
 
         // FIXED: Only apply to shop page, not all queries with empty post_type
         // Check if it's the main query AND specifically the shop page
         if (!is_admin() && $query->is_main_query() && (is_shop() || is_post_type_archive('product'))) {
+            $shop_template = get_option('woo_pages_shop_template');
 
             if ('villegas-shop-one' === $shop_template) {
-                error_log(">>> ENTERING FILTER LOGIC (SHOP PAGE DETECTED) <<<\n", 3, $log_file);
+                // error_log(">>> ENTERING FILTER LOGIC (SHOP PAGE DETECTED) <<<\n", 3, $log_file);
 
                 $custom_order = get_option('woo_pages_product_order', array());
-                error_log("Custom order: " . print_r($custom_order, true) . "\n", 3, $log_file);
+                // error_log("Custom order: " . print_r($custom_order, true) . "\n", 3, $log_file);
 
                 // Get all published products
                 $all_products = get_posts(array(
@@ -173,7 +200,7 @@ class Woo_Pages_Loader
                     'suppress_filters' => true
                 ));
 
-                error_log("All products found: " . count($all_products) . "\n", 3, $log_file);
+                // error_log("All products found: " . count($all_products) . "\n", 3, $log_file);
 
                 // Build final product list: custom order first, then new products
                 $final_product_ids = array();
@@ -182,7 +209,7 @@ class Woo_Pages_Loader
                     // Add visible products from custom order first
                     foreach ($custom_order as $product_id) {
                         $is_visible = get_post_meta($product_id, '_woo_pages_visible', true);
-                        error_log("Product ID $product_id visibility: '$is_visible'\n", 3, $log_file);
+                        // error_log("Product ID $product_id visibility: '$is_visible'\n", 3, $log_file);
                         if ($is_visible !== '0' && in_array($product_id, $all_products)) {
                             $final_product_ids[] = $product_id;
                         }
@@ -200,7 +227,7 @@ class Woo_Pages_Loader
                     }
                 }
 
-                error_log("Final product IDs in order: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
+                // error_log("Final product IDs in order: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
 
                 if (!empty($final_product_ids)) {
                     // FORCIBLY set post type to product
@@ -212,20 +239,12 @@ class Woo_Pages_Loader
                     // Remove any other ordering
                     $query->set('order', '');
 
-                    // Log what was actually set
-                    error_log("FORCED post_type to: product\n", 3, $log_file);
-                    error_log("FORCED post__in to: " . print_r($final_product_ids, true) . "\n", 3, $log_file);
-                    error_log("FORCED orderby to: post__in\n", 3, $log_file);
-                } else {
-                    error_log("No visible products found!\n", 3, $log_file);
+                    // error_log("FORCED post_type to: product\n", 3, $log_file);
+                    // error_log("FORCED post__in to: " . print_r($final_product_ids, true) . "\n", 3, $log_file);
+                    // error_log("FORCED orderby to: post__in\n", 3, $log_file);
                 }
-
-                error_log("===== apply_custom_product_order END =====\n\n", 3, $log_file);
-            } else {
-                error_log("Not using villegas-shop-one template\n\n", 3, $log_file);
+                // error_log("===== apply_custom_product_order END =====\n\n", 3, $log_file);
             }
-        } else {
-            error_log("Filter conditions not met - skipping\n\n", 3, $log_file);
         }
     }
 
@@ -234,17 +253,18 @@ class Woo_Pages_Loader
      */
     public function apply_custom_product_order_wc($query)
     {
-        $log_file = WOO_PAGES_PATH . 'debug.log';
-        error_log("[" . date('Y-m-d H:i:s') . "] ===== WC_PRODUCT_QUERY HOOK FIRED =====\n", 3, $log_file);
-        error_log("WC Query type: " . get_class($query) . "\n", 3, $log_file);
+        // Debug logging disabled to prevent memory exhaustion
+        // $log_file = WOO_PAGES_PATH . 'debug.log';
+        // error_log("[" . date('Y-m-d H:i:s') . "] ===== WC_PRODUCT_QUERY HOOK FIRED =====\n", 3, $log_file);
+        // error_log("WC Query type: " . get_class($query) . "\n", 3, $log_file);
 
         $shop_template = get_option('woo_pages_shop_template');
         if ('villegas-shop-one' !== $shop_template) {
-            error_log("Not using v illegas-shop-one template, skipping\n\n", 3, $log_file);
+            // error_log("Not using villegas-shop-one template, skipping\n\n", 3, $log_file);
             return;
         }
 
-        error_log(">>> APPLYING CUSTOM ORDER VIA WC HOOK <<<\n", 3, $log_file);
+        // error_log(">>> APPLYING CUSTOM ORDER VIA WC HOOK <<<\n", 3, $log_file);
 
         // Get all published products
         $all_products_query = new WP_Query(array(
@@ -280,12 +300,12 @@ class Woo_Pages_Loader
             }
         }
 
-        error_log("Final product IDs: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
+        // error_log("Final product IDs: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
 
         if (!empty($final_product_ids)) {
             $query->set('post__in', $final_product_ids);
             $query->set('orderby', 'post__in');
-            error_log("Set post__in and orderby via WC hook\n\n", 3, $log_file);
+            // error_log("Set post__in and orderby via WC hook\n\n", 3, $log_file);
         }
     }
 
@@ -294,14 +314,15 @@ class Woo_Pages_Loader
      */
     public function filter_products_pre_query($posts, $query)
     {
-        $log_file = WOO_PAGES_PATH . 'debug.log';
+        // Debug logging disabled to prevent memory exhaustion
+        // $log_file = WOO_PAGES_PATH . 'debug.log';
 
         // Only apply on shop page for products
         if (!is_admin() && $query->is_main_query() && (is_shop() || is_post_type_archive('product'))) {
             $shop_template = get_option('woo_pages_shop_template');
 
             if ('villegas-shop-one' === $shop_template) {
-                error_log("[" . date('Y-m-d H:i:s') . "] ===== POSTS_PRE_QUERY HOOK FIRED =====\n", 3, $log_file);
+                // error_log("[" . date('Y-m-d H:i:s') . "] ===== POSTS_PRE_QUERY HOOK FIRED =====\n", 3, $log_file);
 
                 // Get all published products
                 $all_product_ids = get_posts(array(
@@ -338,7 +359,7 @@ class Woo_Pages_Loader
                 }
 
                 if (!empty($final_product_ids)) {
-                    error_log("Fetching products directly: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
+                    // error_log("Fetching products directly: " . implode(', ', $final_product_ids) . "\n", 3, $log_file);
 
                     // Manually get the posts in our custom order
                     $posts = get_posts(array(
@@ -349,7 +370,7 @@ class Woo_Pages_Loader
                         'suppress_filters' => true
                     ));
 
-                    error_log("Retrieved " . count($posts) . " posts\n\n", 3, $log_file);
+                    // error_log("Retrieved " . count($posts) . " posts\n\n", 3, $log_file);
                     return $posts;
                 }
             }
