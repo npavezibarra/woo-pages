@@ -33,16 +33,15 @@ class Woo_Pages_Loader
         // Enqueue cart scripts
         add_action('wp_enqueue_scripts', array($this, 'enqueue_cart_scripts'), 20);
 
+
         // Inject Shipping Comuna field
         add_action('woocommerce_cart_totals_before_shipping', array($this, 'inject_shipping_comuna_field'));
-
-        // Override WooCommerce templates
-        add_filter('woocommerce_locate_template', array($this, 'override_woocommerce_template'), 10, 3);
 
         // Change "Add to cart" button text to "Comprar"
         add_filter('woocommerce_product_add_to_cart_text', array($this, 'change_add_to_cart_text'), 10, 2);
         add_filter('woocommerce_product_single_add_to_cart_text', array($this, 'change_add_to_cart_text'), 10, 2);
     }
+
 
     /**
      * Inject the Shipping Comuna field into the cart totals.
@@ -119,25 +118,6 @@ class Woo_Pages_Loader
                 }
             }
         }
-        return $template;
-    }
-
-    /**
-     * Override WooCommerce templates.
-     *
-     * @param string $template      Template.
-     * @param string $template_name Template name.
-     * @param string $template_path Template path.
-     * @return string
-     */
-    public function override_woocommerce_template($template, $template_name, $template_path)
-    {
-        $plugin_path = WOO_PAGES_PATH . 'templates/woocommerce/';
-
-        if (file_exists($plugin_path . $template_name)) {
-            $template = $plugin_path . $template_name;
-        }
-
         return $template;
     }
 
