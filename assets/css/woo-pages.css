@@ -299,10 +299,17 @@ header>div>div {
     opacity: 1 !important;
 }
 
+/* Ensure all text inside the badge is white */
+.wc-block-mini-cart__badge,
+.wc-block-mini-cart__badge * {
+    color: #fff !important;
+}
+
 /* Ensure the mini cart button is clickable */
 .wc-block-mini-cart__button {
     cursor: pointer !important;
 }
+
 
 
 .villegas-shop-header-inner,
