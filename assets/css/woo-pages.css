@@ -281,9 +281,29 @@ header>div>div {
         margin: 0 !important;
         display: inline-flex !important;
         visibility: visible !important;
-        opacity: 1 !important;
     }
 }
+
+/* Fix WooCommerce Mini Cart Badge - Ensure number is visible */
+.wc-block-mini-cart__badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    line-height: 1 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Ensure the mini cart button is clickable */
+.wc-block-mini-cart__button {
+    cursor: pointer !important;
+}
+
 
 .villegas-shop-header-inner,
 .villegas-shop-content {
